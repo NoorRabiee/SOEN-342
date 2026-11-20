@@ -7,6 +7,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public abstract class HealthcareProfessional {
+    private static int nextId = 1;
+    private final int id = nextId++;
     private final String firstName;
     private final String lastName;
     private final String title;
@@ -20,6 +22,10 @@ public abstract class HealthcareProfessional {
         this.firstName = firstName.trim();
         this.lastName = lastName.trim();
         this.title = title == null ? "" : title.trim();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getFirstName() {

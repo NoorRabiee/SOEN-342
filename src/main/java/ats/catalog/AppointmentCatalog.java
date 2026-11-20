@@ -13,6 +13,16 @@ public class AppointmentCatalog {
         return a;
     }
 
+    // Register Arrival diagram: appt := getAppointment(appointmentId)
+    public Appointment getAppointment(int appointmentId) {
+        for (Appointment a : appointments) {
+            if (a.getId() == appointmentId) {
+                return a;
+            }
+        }
+        return null;
+    }
+
     public List<Appointment> getAll() {
         return new ArrayList<>(appointments);
     }

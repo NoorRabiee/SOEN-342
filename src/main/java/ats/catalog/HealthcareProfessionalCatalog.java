@@ -56,6 +56,16 @@ public class HealthcareProfessionalCatalog {
         return out;
     }
 
+    // hp := find(professionalId)
+    public HealthcareProfessional find(int professionalId) {
+        for (HealthcareProfessional hp : byName.values()) {
+            if (hp.getId() == professionalId) {
+                return hp;
+            }
+        }
+        return null;
+    }
+
     public List<HealthcareProfessional> getAll() {
         return new ArrayList<>(byName.values());
     }

@@ -45,6 +45,16 @@ public class Availability implements Comparable<Availability> {
         return appointment;
     }
 
+    // Search Availability diagram: free = within the date range and not occupied by an Appointment
+    public boolean isFreeWithin(LocalDate startDate, LocalDate endDate) {
+        return !isBooked() && !date.isBefore(startDate) && !date.isAfter(endDate);
+    }
+
+    // Make Availability diagram
+    public boolean overlaps(LocalDate otherDate, LocalTime otherStart, LocalTime otherEnd) {
+        return date.equals(otherDate) && otherStart.isBefore(end) && start.isBefore(otherEnd);
+    }
+
     void occupy(Appointment a) {
         if (isBooked()) {
             throw new IllegalStateException("Time slot unavailable");

@@ -40,12 +40,23 @@ public class Schedule {
     }
 
     public boolean overlaps(LocalDate date, LocalTime start, LocalTime end) {
-        for (Availability a : availabilities) {
-            if (a.getDate().equals(date) && start.isBefore(a.getEnd()) && a.getStart().isBefore(end)) {
+        for (Availability existing : availabilities) {
+            if (existing.overlaps(date, start, end)) {
                 return true;
             }
         }
         return false;
+    }
+
+    // Search Availability diagram: loop over av[j], isFreeWithin(startDate, endDate)
+    public List<Availability> getFreeAvailabilities(LocalDate startDate, LocalDate endDate) {
+        List<Availability> slots = new ArrayList<>();
+        for (Availability av : getAvailabilities()) {
+            if (av.isFreeWithin(startDate, endDate)) {
+                slots.add(av);
+            }
+        }
+        return slots;
     }
 
     public List<Availability> getAvailabilities() {

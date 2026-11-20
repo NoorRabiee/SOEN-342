@@ -118,6 +118,63 @@ public class SystemController {
         return appointment;
     }
 
+    // ===== Operations from the interaction diagrams =====
+
+    // Search Availability (by professional)
+    public List<Availability> searchAvailability(int professionalId, LocalDate startDate, LocalDate endDate) {
+        HealthcareProfessional hp = professionals.find(professionalId);
+        if (hp == null) {
+            throw new IllegalArgumentException("Professional not found");
+        }
+        Schedule sch = hp.getSchedule();
+        return sch.getFreeAvailabilities(startDate, endDate);
+    }
+
+    // Make Availability: selectProfessional -> defineAvailability -> confirmAvailability
+    private Schedule selectedSchedule;
+    private List<LocalDate> dates;
+    private LocalTime startTime;
+    private LocalTime endTime;
+
+    public Schedule selectProfessional(int professionalId) {
+        HealthcareProfessional hp = professionals.find(professionalId);
+        if (hp == null) {
+            throw new IllegalArgumentException("Professional not found");
+        }
+        selectedSchedule = hp.getSchedule();
+        return selectedSchedule;
+    }
+
+    public List<LocalDate> defineAvailability(LocalDate startDate, LocalDate endDate,
+            RepetitionPattern repetitionPattern, LocalTime startTime, LocalTime endTime) {
+        RecurrenceRule rule = new RecurrenceRule(startDate, endDate, repetitionPattern);
+        dates = rule.generateDates();
+        for (LocalDate date : dates) {
+            if (selectedSchedule.overlaps(date, startTime, endTime)) {
+                throw new IllegalStateException("Overlapping availability");
+            }
+        }
+        this.startTime = startTime;
+        this.endTime = endTime;
+        return dates;
+    }
+
+    public void confirmAvailability() {
+        for (LocalDate date : dates) {
+            selectedSchedule.addAvailability(date, startTime, endTime);
+        }
+    }
+
+    // Register Arrival
+    public Appointment registerArrival(int appointmentId) {
+        Appointment appt = appointments.getAppointment(appointmentId);
+        if (appt == null) {
+            throw new IllegalStateException("No valid appointment for today");
+        }
+        appt.registerArrival();
+        return appt;
+    }
+
     // CSV
 
     public BatchResult importAvailability(Path file) throws IOException {
